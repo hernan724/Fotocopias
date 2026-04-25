@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Fotocopias</title>
+<style>
+    body {
+        font-family: Arial;
+        background: #f4f4f4;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    .box {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        width: 330px;
+        box-shadow: 0 0 12px rgba(0,0,0,0.2);
+        text-align: center;
+    }
+    input, button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        font-size: 15px;
+    }
+    .res {
+        margin-top: 15px;
+        text-align: left;
+        font-size: 14px;
+    }
+</style>
+</head>
+<body>
+
+<div class="box">
+    <h2>Fotocopias</h2>
+    <input type="number" id="cantidad" placeholder="Cantidad (1-50)" min="1" max="50">
+    <button onclick="calcular()">Calcular</button>
+
+    <div class="res" id="res"></div>
+</div>
+
+<script>
+function calcular() {
+    let cantidad = parseInt(document.getElementById("cantidad").value);
+    let base = 250;
+
+    if (isNaN(cantidad) || cantidad < 1 || cantidad > 50) {
+        document.getElementById("res").innerHTML = "Ingrese entre 1 y 50.";
+        return;
+    }
+
+    let restante = cantidad;
+    let total = 0;
+    let detalle = "";
+
+    // Tramo 1: 1-5 (0%)
+    let tramo1 = Math.min(restante, 5);
+    if (tramo1 > 0) {
+        total += tramo1 * base;
+        detalle += `${tramo1} copias x $${base} = $${tramo1 * base}<br>`;
+        restante -= tramo1;
+    }
+
+    // Tramo 2: 6-15 (20%)
+    let tramo2 = Math.min(restante, 10);
+    if (tramo2 > 0) {
+        let precio = base * 0.80;
+        total += tramo2 * precio;
+        detalle += `${tramo2} copias x $${precio.toFixed(2)} = $${(tramo2 * precio).toFixed(2)}<br>`;
+        restante -= tramo2;
+    }
+
+    // Tramo 3: 16-30 (35%)
+    let tramo3 = Math.min(restante, 15);
+    if (tramo3 > 0) {
+        let precio = base * 0.65;
+        total += tramo3 * precio;
+        detalle += `${tramo3} copias x $${precio.toFixed(2)} = $${(tramo3 * precio).toFixed(2)}<br>`;
+        restante -= tramo3;
+    }
+
+    // Tramo 4: 31-50 (45%)
+    let tramo4 = Math.min(restante, 20);
+    if (tramo4 > 0) {
+        let precio = base * 0.55;
+        total += tramo4 * precio;
+        detalle += `${tramo4} copias x $${precio.toFixed(2)} = $${(tramo4 * precio).toFixed(2)}<br>`;
+    }
+
+    // Redondeo final
+    let totalRedondeado = Math.ceil(total / 100) * 100;
+    let promedio = totalRedondeado / cantidad;
+
+    let mensaje = "";
+    if (cantidad >= 6) {
+        mensaje += "💡 ¡Ya estás obteniendo descuento!<br>";
+    }
+    if (cantidad >= 16) {
+        mensaje += "🔥 ¡Mejor precio por cantidad!";
+    }
+
+    document.getElementById("res").innerHTML = `
+        ${detalle}
+        <hr>
+        <strong>TOTAL: $${totalRedondeado}</strong><br>
+        Precio promedio por copia: $${promedio.toFixed(2)}<br><br>
+        ${mensaje}
+    `;
+}
+</script>
+
+</body>
+</html>
